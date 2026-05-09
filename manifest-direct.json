@@ -1,0 +1,20 @@
+[
+  {
+    "category": "General",
+    "guid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "CinemaVault",
+    "description": "Netflix-style media discovery with Seerr integration",
+    "overview": "Transform Jellyfin into a Netflix/Disney+ experience with hero banners, carousels, and Seerr integration",
+    "owner": "CinemaVault",
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "changelog": "Initial release — Complete Netflix-style UI with Seerr integration\n\n🎬 Features:\n- Hero banner with rotating featured content\n- Horizontal scrolling carousels (Netflix-style)\n- Seerr/Jellyseerr integration for content discovery\n- Radarr/Sonarr integration for download management\n- Real-time request status tracking\n- Personal watchlist management\n- Responsive design with mobile support\n- Dark theme with customizable accent colors\n- Request management system\n- Content details modal with trailers\n- Advanced search functionality\n- User profile and settings pages\n\n🔧 Technical:\n- Built for Jellyfin 10.11.x\n- .NET 9 runtime\n- Vanilla JavaScript (no frameworks)\n- CSS Grid and Flexbox layouts\n- Intersection Observer for lazy loading\n- Service worker for caching\n- Responsive design patterns\n\n🐛 Known Issues:\n- CSS line-clamp warnings in older browsers (cosmetic only)\n- Requires modern browser for full functionality",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/Homelab56/CinemaVault/master/manifest.json",
+        "checksum": "PLACEHOLDER_CHECKSUM",
+        "timestamp": "2026-05-09T00:00:00Z"
+      }
+    ]
+  }
+]
