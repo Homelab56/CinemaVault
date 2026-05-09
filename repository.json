@@ -1,8 +1,8 @@
 {
   "name": "CinemaVault Repository",
-  "url": "https://github.com/Homelab56/CinemaVault.git",
+  "url": "https://github.com/Homelab56/CinemaVault",
   "description": "Netflix-style UI for Jellyfin with Seerr integration",
   "website": "https://github.com/Homelab56/CinemaVault",
   "information": "https://github.com/Homelab56/CinemaVault/blob/main/README.md",
-  "checksum": ""
+  "checksum": "PLACEHOLDER_CHECKSUM"
 }
