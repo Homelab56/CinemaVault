@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaVault - Netflix-style UI for Jellyfin</title>
+    <meta name="description" content="Transform your Jellyfin experience with CinemaVault - a Netflix-style interface with Seerr integration">
+    
+    <!-- CinemaVault CSS -->
+    <link rel="stylesheet" href="/CinemaVault/Web/assets/cinemavault.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/CinemaVault/Web/assets/cinemavault.js" as="script">
+    <link rel="preload" href="/CinemaVault/Web/assets/utils/api.js" as="script">
+    <link rel="preload" href="/CinemaVault/Web/assets/utils/jellyfin.js" as="script">
+    <link rel="preload" href="/CinemaVault/Web/assets/utils/cache.js" as="script">
+    <link rel="preload" href="/CinemaVault/Web/assets/utils/router.js" as="script">
+    <link rel="preload" href="/CinemaVault/Web/assets/components/navbar.js" as="script">
+    <link rel="preload" href="/CinemaVault/Web/assets/components/hero.js" as="script">
+    <link rel="preload" href="/CinemaVault/Web/assets/components/carousel.js" as="script">
+    <link rel="preload" href="/CinemaVault/Web/assets/components/card.js" as="script">
+    <link rel="preload" href="/CinemaVault/Web/assets/components/modal.js" as="script">
+    <link rel="preload" href="/CinemaVault/Web/assets/components/search.js" as="script">
+    <link rel="preload" href="/CinemaVault/Web/assets/components/toast.js" as="script">
+    
+    <style>
+        /* Loading screen styles */
+        .cv-loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0a0a0f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        .cv-loading-content {
+            text-align: center;
+            color: #ffffff;
+        }
+        
+        .cv-loading-logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #6c63ff, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .cv-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #6c63ff;
+            border-radius: 50%;
+            animation: cv-spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes cv-spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .cv-loading-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+        
+        /* Error state */
+        .cv-error-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0a0a0f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        .cv-error-content {
+            text-align: center;
+            color: #ffffff;
+            max-width: 500px;
+            padding: 2rem;
+        }
+        
+        .cv-error-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            opacity: 0.6;
+        }
+        
+        .cv-error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .cv-error-message {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+        
+        .cv-error-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .cv-error-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-size: 0.9rem;
+        }
+        
+        .cv-error-btn-primary {
+            background: #6c63ff;
+            color: white;
+        }
+        
+        .cv-error-btn-primary:hover {
+            background: #8b84ff;
+            transform: translateY(-1px);
+        }
+        
+        .cv-error-btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .cv-error-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="cvLoadingScreen" class="cv-loading-screen">
+        <div class="cv-loading-content">
+            <div class="cv-loading-logo">🎬 CinemaVault</div>
+            <div class="cv-loading-spinner"></div>
+            <div class="cv-loading-text">Loading your entertainment experience...</div>
+        </div>
+    </div>
+
+    <!-- Error Screen (hidden by default) -->
+    <div id="cvErrorScreen" class="cv-error-screen" style="display: none;">
+        <div class="cv-error-content">
+            <svg class="cv-error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <h2 class="cv-error-title">Oops! Something went wrong</h2>
+            <p class="cv-error-message" id="cvErrorMessage">
+                CinemaVault failed to load properly. This might be due to a network issue or incompatible browser version.
+            </p>
+            <div class="cv-error-actions">
+                <button class="cv-error-btn cv-error-btn-primary" onclick="location.reload()">
+                    Reload Page
+                </button>
+                <button class="cv-error-btn cv-error-btn-secondary" onclick="showErrorDetails()">
+                    Show Details
+                </button>
+            </div>
+            <div id="cvErrorDetails" style="display: none; margin-top: 2rem; text-align: left; font-size: 0.875rem; opacity: 0.6;">
+                <!-- Error details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CinemaVault Root Container -->
+    <div id="cinemavault-root" style="display: none;">
+        <!-- Content will be loaded here -->
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Global error handler
+        window.addEventListener('error', function(e) {
+            console.error('CinemaVault Error:', e.error);
+            showError('JavaScript Error: ' + e.error.message, e.error);
+        });
+
+        // Global unhandled promise rejection handler
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('CinemaVault Unhandled Promise Rejection:', e.reason);
+            showError('Promise Rejection: ' + e.reason, e.reason);
+        });
+
+        function showError(message, error = null) {
+            const loadingScreen = document.getElementById('cvLoadingScreen');
+            const errorScreen = document.getElementById('cvErrorScreen');
+            const errorMessage = document.getElementById('cvErrorMessage');
+            const errorDetails = document.getElementById('cvErrorDetails');
+
+            if (loadingScreen) loadingScreen.style.display = 'none';
+            if (errorScreen) errorScreen.style.display = 'flex';
+            if (errorMessage) errorMessage.textContent = message;
+            if (error && errorDetails) {
+                errorDetails.innerHTML = `
+                    <strong>Error Details:</strong><br>
+                    ${error.stack || error.toString()}
+                `;
+            }
+        }
+
+        function showErrorDetails() {
+            const details = document.getElementById('cvErrorDetails');
+            if (details) {
+                details.style.display = details.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+
+        // Load CinemaVault scripts in order
+        function loadScripts() {
+            const scripts = [
+                '/CinemaVault/Web/assets/utils/api.js',
+                '/CinemaVault/Web/assets/utils/jellyfin.js',
+                '/CinemaVault/Web/assets/utils/cache.js',
+                '/CinemaVault/Web/assets/utils/router.js',
+                '/CinemaVault/Web/assets/components/navbar.js',
+                '/CinemaVault/Web/assets/components/hero.js',
+                '/CinemaVault/Web/assets/components/carousel.js',
+                '/CinemaVault/Web/assets/components/card.js',
+                '/CinemaVault/Web/assets/components/modal.js',
+                '/CinemaVault/Web/assets/components/search.js',
+                '/CinemaVault/Web/assets/components/toast.js',
+                '/CinemaVault/Web/assets/cinemavault.js'
+            ];
+
+            let loadedCount = 0;
+            
+            function loadScript(index) {
+                if (index >= scripts.length) {
+                    // All scripts loaded, initialize CinemaVault
+                    initializeCinemaVault();
+                    return;
+                }
+
+                const script = document.createElement('script');
+                script.src = scripts[index];
+                script.onload = () => {
+                    loadedCount++;
+                    loadScript(index + 1);
+                };
+                script.onerror = () => {
+                    console.error('Failed to load script:', scripts[index]);
+                    showError('Failed to load CinemaVault script: ' + scripts[index]);
+                };
+                
+                document.head.appendChild(script);
+            }
+
+            loadScript(0);
+        }
+
+        function initializeCinemaVault() {
+            try {
+                // Hide loading screen
+                const loadingScreen = document.getElementById('cvLoadingScreen');
+                if (loadingScreen) {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 300);
+                }
+
+                // Initialize CinemaVault if available
+                if (window.CinemaVault && typeof window.CinemaVault.init === 'function') {
+                    window.CinemaVault.init();
+                } else {
+                    throw new Error('CinemaVault not properly loaded');
+                }
+
+            } catch (error) {
+                console.error('Error initializing CinemaVault:', error);
+                showError('Failed to initialize CinemaVault: ' + error.message, error);
+            }
+        }
+
+        // Start loading scripts
+        loadScripts();
+
+        // Add global keyboard shortcut (Ctrl+K or Cmd+K for search)
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                if (window.CinemaVaultSearch && typeof window.CinemaVaultSearch.openSearch === 'function') {
+                    window.CinemaVaultSearch.openSearch();
+                }
+            }
+        });
+
+        // Add version info to console
+        console.log('%c🎬 CinemaVault v1.0.0.0', 'color: #6c63ff; font-size: 16px; font-weight: bold;');
+        console.log('%cNetflix-style UI for Jellyfin with Seerr integration', 'color: #888; font-style: italic;');
+    </script>
+</body>
+</html>

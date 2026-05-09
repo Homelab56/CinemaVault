@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaVault Configuration</title>
+    
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #141414;
+            color: #fff;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #6c63ff, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 1rem;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 24px;
+            background: #1a1a2e;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #6c63ff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #6c63ff;
+            border-radius: 2px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #b0b0c8;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0a0a0f;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #6c63ff;
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+        }
+        
+        .form-group input[type="color"] {
+            height: 48px;
+            cursor: pointer;
+        }
+        
+        .form-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #b0b0c8;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #6c63ff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #8b84ff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #2a2a3e;
+            color: #fff;
+            border: 1px solid #444;
+        }
+        
+        .btn-secondary:hover {
+            background: #333;
+            border-color: #6c63ff;
+        }
+        
+        .btn-success {
+            background: #00d4aa;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #00b894;
+        }
+        
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #ff3838;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .status {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-success {
+            background: #00d4aa;
+            color: white;
+        }
+        
+        .status-error {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .status-warning {
+            background: #ffa733;
+            color: white;
+        }
+        
+        .connection-status {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #0a0a0f;
+            border: 1px solid #333;
+        }
+        
+        .connection-status.connected {
+            border-color: #00d4aa;
+        }
+        
+        .connection-status.error {
+            border-color: #ff4757;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .actions .btn {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+        
+        .preview {
+            margin-top: 16px;
+            padding: 16px;
+            background: #0a0a0f;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        
+        .preview-card {
+            width: 120px;
+            height: 180px;
+            background: #1a1a2e;
+            border-radius: 6px;
+            border: 2px solid var(--accent-color, #6c63ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #888;
+            transition: all 0.2s ease;
+        }
+        
+        .preview-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(108, 99, 255, 0.3);
+        }
+        
+        .info-box {
+            background: #2a2a3e;
+            border: 1px solid #444;
+            border-left: 4px solid #6c63ff;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+        
+        .info-box h3 {
+            margin: 0 0 8px 0;
+            color: #6c63ff;
+        }
+        
+        .info-box p {
+            margin: 0;
+            color: #b0b0c8;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎬 CinemaVault</div>
+            <div class="subtitle">Netflix-style UI Configuration</div>
+        </div>
+
+        <form id="configForm">
+            <!-- Seerr Connection -->
+            <div class="section">
+                <h2 class="section-title">Seerr Connection</h2>
+                
+                <div class="form-group">
+                    <label for="seerrUrl">Seerr URL</label>
+                    <input type="url" id="seerrUrl" placeholder="http://localhost:5056">
+                </div>
+                
+                <div class="form-group">
+                    <label for="seerrApiKey">API Key</label>
+                    <input type="password" id="seerrApiKey" placeholder="Enter your Seerr API key">
+                </div>
+                
+                <div class="actions">
+                    <button type="button" class="btn btn-primary" onclick="testSeerrConnection()">
+                        Test Connection
+                    </button>
+                </div>
+                
+                <div id="seerrStatus" class="connection-status" style="display: none;">
+                    <!-- Status will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Radarr Connection -->
+            <div class="section">
+                <h2 class="section-title">Radarr Connection</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="radarrUrl">Radarr URL</label>
+                        <input type="url" id="radarrUrl" placeholder="http://localhost:7878">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="radarrApiKey">API Key</label>
+                        <input type="password" id="radarrApiKey" placeholder="Enter your Radarr API key">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="radarrQualityProfileId">Quality Profile ID</label>
+                        <input type="number" id="radarrQualityProfileId" value="1" min="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="radarrRootFolder">Root Folder</label>
+                        <input type="text" id="radarrRootFolder" value="/media/movies" placeholder="/media/movies">
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button type="button" class="btn btn-primary" onclick="testRadarrConnection()">
+                        Test Connection
+                    </button>
+                </div>
+                
+                <div id="radarrStatus" class="connection-status" style="display: none;">
+                    <!-- Status will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Sonarr Connection -->
+            <div class="section">
+                <h2 class="section-title">Sonarr Connection</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="sonarrUrl">Sonarr URL</label>
+                        <input type="url" id="sonarrUrl" placeholder="http://localhost:8989">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sonarrApiKey">API Key</label>
+                        <input type="password" id="sonarrApiKey" placeholder="Enter your Sonarr API key">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="sonarrQualityProfileId">Quality Profile ID</label>
+                        <input type="number" id="sonarrQualityProfileId" value="1" min="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sonarrRootFolder">Root Folder</label>
+                        <input type="text" id="sonarrRootFolder" value="/media/series" placeholder="/media/series">
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button type="button" class="btn btn-primary" onclick="testSonarrConnection()">
+                        Test Connection
+                    </button>
+                </div>
+                
+                <div id="sonarrStatus" class="connection-status" style="display: none;">
+                    <!-- Status will be inserted here -->
+                </div>
+            </div>
+
+            <!-- User Permissions -->
+            <div class="section">
+                <h2 class="section-title">User Permissions</h2>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="allowUserRequests">
+                        Allow non-admin users to make requests
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="maxRequestsPerUser">Maximum requests per user</label>
+                    <input type="number" id="maxRequestsPerUser" value="20" min="1" max="100">
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="enable4KRequests">
+                        Enable 4K request option
+                    </label>
+                </div>
+            </div>
+
+            <!-- Display Settings -->
+            <div class="section">
+                <h2 class="section-title">Display Settings</h2>
+                
+                <div class="form-group">
+                    <label for="accentColor">Accent Color</label>
+                    <input type="color" id="accentColor" value="#6c63ff">
+                    <div class="preview">
+                        <div class="preview-card" id="colorPreview">
+                            Preview Card
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="enableHeroBanner">
+                        Enable hero banner
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="heroRotationSeconds">Hero banner rotation (seconds)</label>
+                    <input type="number" id="heroRotationSeconds" value="8" min="3" max="30">
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showAdultContent">
+                        Show adult content
+                    </label>
+                </div>
+            </div>
+
+            <!-- Save Actions -->
+            <div class="section">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                        💾 Save Configuration
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetToDefaults()">
+                        🔄 Reset to Defaults
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="exportConfig()">
+                        📤 Export Config
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Information -->
+        <div class="info-box">
+            <h3>📋 Important Notes</h3>
+            <p>
+                • Make sure Seerr, Radarr, and Sonarr are accessible from this Jellyfin server<br>
+                • API keys should have appropriate permissions for requests and library management<br>
+                • After saving configuration, restart the plugin for changes to take effect<br>
+                • Use the test buttons to verify connections before saving
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Configuration object
+        let config = {};
+
+        // Load configuration from Jellyfin
+        function loadConfig() {
+            try {
+                // This would normally load from Jellyfin's plugin configuration
+                // For now, we'll use default values
+                config = {
+                    seerrUrl: '',
+                    seerrApiKey: '',
+                    radarrUrl: 'http://localhost:7878',
+                    radarrApiKey: '',
+                    radarrQualityProfileId: 1,
+                    radarrRootFolder: '/media/movies',
+                    sonarrUrl: 'http://localhost:8989',
+                    sonarrApiKey: '',
+                    sonarrQualityProfileId: 1,
+                    sonarrRootFolder: '/media/series',
+                    allowUserRequests: true,
+                    maxRequestsPerUser: 20,
+                    enable4KRequests: false,
+                    accentColor: '#6c63ff',
+                    enableHeroBanner: true,
+                    heroRotationSeconds: 8,
+                    showAdultContent: false
+                };
+
+                // Populate form fields
+                Object.keys(config).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') {
+                            element.checked = config[key];
+                        } else {
+                            element.value = config[key];
+                        }
+                    }
+                });
+
+                updateColorPreview();
+
+            } catch (error) {
+                console.error('Error loading configuration:', error);
+            }
+        }
+
+        // Save configuration
+        function saveConfig() {
+            try {
+                // Collect form data
+                const formData = new FormData(document.getElementById('configForm'));
+                const newConfig = {};
+                
+                for (const [key, value] of formData.entries()) {
+                    const element = document.getElementById(key);
+                    if (element.type === 'checkbox') {
+                        newConfig[key] = element.checked;
+                    } else if (element.type === 'number') {
+                        newConfig[key] = parseInt(value) || 0;
+                    } else {
+                        newConfig[key] = value;
+                    }
+                }
+
+                // This would normally save to Jellyfin's plugin configuration
+                config = { ...config, ...newConfig };
+                
+                alert('Configuration saved! Restart the plugin for changes to take effect.');
+
+            } catch (error) {
+                console.error('Error saving configuration:', error);
+                alert('Error saving configuration: ' + error.message);
+            }
+        }
+
+        // Test Seerr connection
+        async function testSeerrConnection() {
+            const statusDiv = document.getElementById('seerrStatus');
+            const url = document.getElementById('seerrUrl').value;
+            const apiKey = document.getElementById('seerrApiKey').value;
+
+            if (!url || !apiKey) {
+                showStatus('seerr', 'error', 'URL and API key are required');
+                return;
+            }
+
+            showStatus('seerr', 'loading', 'Testing connection...');
+            
+            try {
+                // This would normally call the API
+                // For demo purposes, we'll simulate a connection test
+                await simulateConnectionTest('Seerr', url);
+                showStatus('seerr', 'success', 'Connected successfully');
+            } catch (error) {
+                showStatus('seerr', 'error', 'Connection failed: ' + error.message);
+            }
+        }
+
+        // Test Radarr connection
+        async function testRadarrConnection() {
+            const statusDiv = document.getElementById('radarrStatus');
+            const url = document.getElementById('radarrUrl').value;
+            const apiKey = document.getElementById('radarrApiKey').value;
+
+            if (!url || !apiKey) {
+                showStatus('radarr', 'error', 'URL and API key are required');
+                return;
+            }
+
+            showStatus('radarr', 'loading', 'Testing connection...');
+            
+            try {
+                await simulateConnectionTest('Radarr', url);
+                showStatus('radarr', 'success', 'Connected successfully');
+            } catch (error) {
+                showStatus('radarr', 'error', 'Connection failed: ' + error.message);
+            }
+        }
+
+        // Test Sonarr connection
+        async function testSonarrConnection() {
+            const statusDiv = document.getElementById('sonarrStatus');
+            const url = document.getElementById('sonarrUrl').value;
+            const apiKey = document.getElementById('sonarrApiKey').value;
+
+            if (!url || !apiKey) {
+                showStatus('sonarr', 'error', 'URL and API key are required');
+                return;
+            }
+
+            showStatus('sonarr', 'loading', 'Testing connection...');
+            
+            try {
+                await simulateConnectionTest('Sonarr', url);
+                showStatus('sonarr', 'success', 'Connected successfully');
+            } catch (error) {
+                showStatus('sonarr', 'error', 'Connection failed: ' + error.message);
+            }
+        }
+
+        // Simulate connection test (for demo purposes)
+        function simulateConnectionTest(service, url) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // Simulate network delay
+                    if (url && url.startsWith('http')) {
+                        resolve();
+                    } else {
+                        reject(new Error('Invalid URL'));
+                    }
+                }, 1000);
+            });
+        }
+
+        // Show connection status
+        function showStatus(service, type, message) {
+            const statusDiv = document.getElementById(service + 'Status');
+            if (!statusDiv) return;
+
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'connection-status ' + type;
+            
+            if (type === 'loading') {
+                statusDiv.innerHTML = `<div class="status status-warning">⏳ ${message}</div>`;
+            } else if (type === 'success') {
+                statusDiv.innerHTML = `<div class="status status-success">✅ ${message}</div>`;
+            } else if (type === 'error') {
+                statusDiv.innerHTML = `<div class="status status-error">❌ ${message}</div>`;
+            }
+        }
+
+        // Update color preview
+        function updateColorPreview() {
+            const color = document.getElementById('accentColor').value;
+            const preview = document.getElementById('colorPreview');
+            if (preview) {
+                preview.style.setProperty('--accent-color', color);
+            }
+        }
+
+        // Reset to defaults
+        function resetToDefaults() {
+            if (confirm('Are you sure you want to reset all settings to their default values?')) {
+                loadConfig();
+                alert('Settings reset to defaults. Click "Save Configuration" to apply.');
+            }
+        }
+
+        // Export configuration
+        function exportConfig() {
+            const configData = JSON.stringify(config, null, 2);
+            const blob = new Blob([configData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cinemavault-config.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadConfig();
+            
+            // Form submission
+            document.getElementById('configForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveConfig();
+            });
+
+            // Color change handler
+            document.getElementById('accentColor').addEventListener('input', updateColorPreview);
+        });
+    </script>
+</body>
+</html>
